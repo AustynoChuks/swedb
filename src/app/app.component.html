@@ -1,0 +1,137 @@
+<div class="wrapper">
+  <div class="tabs-container">
+    <a href="#" [ngClass]="{'tab':true, 'active':currentTab ==1, 'green':currentTab > 1}">
+      <span *ngIf="currentTab > 1" class="tag green" [innerHTML]="'&#10004;'"></span>
+      <span class="tag" *ngIf="currentTab == 1"> 1</span> 
+      <span class="label">
+        Application
+      </span>
+      
+    </a>
+    <a href="#" [ngClass]="{'tab':true, 'active':currentTab ==2, 'green':currentTab > 2}">
+      <span *ngIf="currentTab > 2" class="tag" [innerHTML]="'&#10004;'"></span>
+      <span class="tag" *ngIf="currentTab <= 2 "> 2</span> 
+      <span class="label">
+        Personal Data of Applicant
+      </span>
+      
+    </a>
+    
+    <a href="#" [ngClass]="{'tab':true, 'active':currentTab ==3}">
+      <span class="tag">3</span>
+      <span class="label">
+        Send Application
+      </span>
+      
+    </a>
+  </div>
+
+  <div class="tabs-content">
+    <div [ngClass]="{'content':true, 'active':currentTab == 1, 'left': transitionDirection == 'left', 'right':transitionDirection == 'right'}">
+      <form> 
+        <div class="form-data">
+          <label>purpose of the loan <span>*</span></label>
+          <select class="form-control">
+            <option>Real estate renovation/ solar panel</option>
+            <option>Real estate purchase</option>
+          </select>
+        </div>
+
+        <div class="form-data">
+          <label>Credit Type <span>*</span></label>
+          <input type="text" class="form-control" name="credit_type"/>
+        </div>
+        <div class="form-data">
+          <label>Real estate address <span>*</span></label>
+          <input type="text" [value]="title" class="form-control" name="address"/>
+        </div>
+
+        <div class="form-data">
+          <label>Loan amount <span>*</span></label>
+          <input type="text" class="form-control" name="amount"/>
+        </div>
+
+        <div class="form-data">
+          <label>Loan term <span>*</span></label>
+          <input type="number" min="1" max="10" placeholder="Year" class="form-control" name="year"/>
+          <input type="number" min="1" max="12" placeholder="Month" class="form-control" name="month"/>
+        </div>
+
+        <div class="form-data">
+          <label>Loan repayment method <span>*</span></label>
+          <span>Annuity</span>
+        </div>
+
+        <div class="form-data">
+          <label>Prefered repayment date <span>*</span></label>
+          <input type="text" class="form-control" name="repay_date"/>
+        </div>
+
+        <br/>
+
+        <div class="button-holder">
+          <button type="button" (click)="forward()">Forward</button>
+        </div>
+        
+      </form>
+    </div>
+
+    <div [ngClass]="{'content':true, 'active':currentTab == 2, 'left': transitionDirection == 'left', 'right':transitionDirection == 'right'}">
+      <form> 
+        <div class="form-data">
+          <label>purpose of the loan <span>*</span></label>
+          <select class="form-control">
+            <option>Real estate renovation/ solar panel</option>
+            <option>Real estate purchase</option>
+          </select>
+        </div>
+
+        <div class="form-data">
+          <label>Credit Type <span>*</span></label>
+          <input type="text" class="form-control" name="credit_type"/>
+        </div>
+        <div class="form-data">
+          <label>Real estate address <span>*</span></label>
+          <input type="text" [value]="title" class="form-control" name="address"/>
+        </div>
+
+        <div class="form-data">
+          <label>Loan amount <span>*</span></label>
+          <input type="text" class="form-control" name="amount"/>
+        </div>
+
+        <div class="form-data">
+          <label>Loan term <span>*</span></label>
+          <input type="number" min="1" max="10" placeholder="Year" class="form-control" name="year"/>
+          <input type="number" min="1" max="12" placeholder="Month" class="form-control" name="month"/>
+        </div>
+
+        <div class="form-data">
+          <label>Loan repayment method <span>*</span></label>
+          <span>Annuity</span>
+        </div>
+
+        <div class="form-data">
+          <label>Prefered repayment date <span>*</span></label>
+          <input type="text" class="form-control" name="repay_date"/>
+        </div>
+
+        <br/>
+        <div class="button-holder">
+          <button type="button" (click)="back()">Back</button>
+          <button type="button" (click)="forward()">Forward</button>
+        </div>
+      </form>
+    </div>
+
+    <div [ngClass]="{'content':true, 'active':currentTab == 3, 'left': transitionDirection == 'left', 'right':transitionDirection == 'right'}">
+      <p>Hello</p>
+      <div class="button-holder">
+        <button type="button" (click)="back()">Edit</button>
+        <button type="button" (click)="verifyApplication()">Submit</button>
+      </div>
+      
+    </div>
+
+  </div>
+</div>
