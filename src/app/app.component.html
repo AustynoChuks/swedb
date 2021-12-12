@@ -17,8 +17,9 @@
       
     </a>
     
-    <a href="#" [ngClass]="{'tab':true, 'active':currentTab ==3}">
-      <span class="tag">3</span>
+    <a href="#" [ngClass]="{'tab':true, 'active':currentTab ==3, 'green':currentTab > 3}">
+      <span *ngIf="currentTab > 3" class="tag" [innerHTML]="'&#10004;'"></span>
+      <span class="tag" *ngIf="currentTab <= 3"> 3</span>
       <span class="label">
         Send Application
       </span>
@@ -26,35 +27,55 @@
     </a>
   </div>
 
+  
+
   <div class="tabs-content">
     <div [ngClass]="{'content':true, 'active':currentTab == 1, 'left': transitionDirection == 'left', 'right':transitionDirection == 'right'}">
       <form> 
         <div class="form-data">
           <label>purpose of the loan <span>*</span></label>
-          <select class="form-control">
-            <option>Real estate renovation/ solar panel</option>
-            <option>Real estate purchase</option>
-          </select>
+          <div>
+            
+            <select class="form-control" [(ngModel)]="formData.purpose" name="purpose">
+              <option value="">Select purpose of loan</option>
+              <option>Real estate renovation/ solar panel</option>
+              <option>Real estate purchase</option>
+            </select>
+            <div class="error" *ngIf="showError && formData.purpose == ''">Please select loan purpose</div>
+          </div>
         </div>
+        
 
         <div class="form-data">
           <label>Credit Type <span>*</span></label>
-          <input type="text" class="form-control" name="credit_type"/>
+          <div>
+            <input type="text" class="form-control" [(ngModel)]="formData.credit_type" name="credit_type"/>
+            <div class="error" *ngIf="showError && formData.credit_type == ''">Please select Credit type</div>
+          </div>
         </div>
         <div class="form-data">
           <label>Real estate address <span>*</span></label>
-          <input type="text" [value]="title" class="form-control" name="address"/>
+          <div>
+            <input type="text" [(ngModel)]="formData.address" class="form-control" name="address"/>
+            <div class="error" *ngIf="showError && formData.address == ''">Please provide property address</div>
+          </div>
         </div>
 
         <div class="form-data">
           <label>Loan amount <span>*</span></label>
-          <input type="text" class="form-control" name="amount"/>
+          <div>
+            <input type="number" [(ngModel)]="formData.amount" class="form-control" name="amount"/>
+            <div class="error" *ngIf="showError && formData.amount == 0">Please provide loan amount</div>
+          </div>
         </div>
 
         <div class="form-data">
           <label>Loan term <span>*</span></label>
-          <input type="number" min="1" max="10" placeholder="Year" class="form-control" name="year"/>
-          <input type="number" min="1" max="12" placeholder="Month" class="form-control" name="month"/>
+          <div>
+            <input type="number" min="1" max="10" placeholder="Year" [(ngModel)]="formData.termYear" class="form-control" name="year"/>
+            <input type="number" min="1" max="12" placeholder="Month" [(ngModel)]="formData.termMonth" class="form-control" name="month"/>
+            <div class="error" *ngIf="showError && loanTermEmpty()">Please provide loan term duration</div>
+          </div>
         </div>
 
         <div class="form-data">
@@ -64,74 +85,253 @@
 
         <div class="form-data">
           <label>Prefered repayment date <span>*</span></label>
-          <input type="text" class="form-control" name="repay_date"/>
+          <div>
+            <input type="date" class="form-control" [(ngModel)]="formData.repayDate" name="repay_date"/>
+            <div class="error" *ngIf="showError && formData.repayDate == ''">Please provide repay date</div>
+          </div>
+        </div>
+        <h3>Income and Obligation data</h3>
+
+        <div class="form-data">
+          <label>Monthly Salary after tax <span>*</span></label>
+          <div>
+            <input type="number" class="form-control" [(ngModel)]="formData.salary" name="salary"/>
+            <div class="error" *ngIf="showError && formData.salary == ''">Please provide salary in Euros</div>
+          </div>
         </div>
 
+        <div class="form-data">
+          <label>Monthly Salary after tax</label>
+            <input type="checkbox" style="transform:scale(2)" [(ngModel)]="formData.otherIncome" name="otherIncome"/>
+        </div>
+
+        <div *ngIf="formData.otherIncome">
+          <div class="form-data">
+            <label>Rental Income <span></span></label>
+            <div>
+              <input type="number" class="form-control" [(ngModel)]="formData.rentIncome" name="rentIncome"/>
+            </div>
+          </div>
+
+          <div class="form-data">
+            <label>Social Support <span></span></label>
+            <div>
+              <input type="number" class="form-control" [(ngModel)]="formData.socialIncome" name="socialIncome"/>
+            </div>
+          </div>
+
+          <div class="form-data">
+            <label>Others <span></span> </label>
+            <div>
+              <input type="number" class="form-control" [(ngModel)]="formData.others" name="others"/>
+            </div>
+          </div>
+        </div>
+        <div class="form-data">
+          <label>Total Income </label>
+          <b>{{getTotalIncome()}}</b>
+        </div>
         <br/>
 
         <div class="button-holder">
-          <button type="button" (click)="forward()">Forward</button>
+          <button type="button" (click)="verifyApplication()">Forward</button>
         </div>
         
       </form>
+      
     </div>
 
     <div [ngClass]="{'content':true, 'active':currentTab == 2, 'left': transitionDirection == 'left', 'right':transitionDirection == 'right'}">
       <form> 
+        <h3>Borrowers Data</h3>
+
         <div class="form-data">
-          <label>purpose of the loan <span>*</span></label>
-          <select class="form-control">
-            <option>Real estate renovation/ solar panel</option>
-            <option>Real estate purchase</option>
-          </select>
+          <label>Firstname <span>*</span></label>
+          <div>
+            <input type="text" class="form-control" name="firstname" [(ngModel)]="formData.firstname"/>
+            <div class="error" *ngIf="showError && formData.firstname == ''">Firstname is required</div>
+          </div>
         </div>
 
         <div class="form-data">
-          <label>Credit Type <span>*</span></label>
-          <input type="text" class="form-control" name="credit_type"/>
+          <label>Lastname <span>*</span></label>
+          <div>
+            <input type="text" class="form-control" name="lastname" [(ngModel)]="formData.lastname"/>
+            <div class="error" *ngIf="showError && formData.lastname == ''">Lastname is required</div>
+          </div>
         </div>
+        
+
         <div class="form-data">
-          <label>Real estate address <span>*</span></label>
-          <input type="text" [value]="title" class="form-control" name="address"/>
+          <label>Personal code <span>*</span></label>
+          <div>
+            <input type="text" class="form-control" name="code" [(ngModel)]="formData.code"/>
+            <div class="error" *ngIf="showError && formData.code == ''">Personal code is required</div>
+          </div>
+          
         </div>
 
         <div class="form-data">
-          <label>Loan amount <span>*</span></label>
-          <input type="text" class="form-control" name="amount"/>
+          <label>Marital Status <span>*</span></label>
+          <div>
+            
+            <select class="form-control" [(ngModel)]="formData.maritalStatus" name="maritalStatus">
+              <option value="">Choose your status</option>
+              <option>Single</option>
+              <option>Married</option>
+              <option>common law marriage</option>
+              <option>Divorced</option>
+              <option>Widow/Widower</option>
+            </select>
+            <div class="error" *ngIf="showError && formData.maritalStatus == ''">Please marital status</div>
+          </div>
+        </div>
+        <h3>Education Data</h3>
+        <div class="form-data">
+          <label>Others <span>*</span></label>
+          <div>
+            
+            <select class="form-control" [(ngModel)]="formData.education" name="education">
+              <option value="">Choose your highest level of education</option>
+              <option>Primary</option>
+              <option>Secondary</option>
+              <option>Tertiary</option>
+              <option>Others</option>
+              
+            </select>
+            <div class="error" *ngIf="showError && formData.education == ''">Please Choose your highest level of education</div>
+          </div>
         </div>
 
         <div class="form-data">
-          <label>Loan term <span>*</span></label>
-          <input type="number" min="1" max="10" placeholder="Year" class="form-control" name="year"/>
-          <input type="number" min="1" max="12" placeholder="Month" class="form-control" name="month"/>
+          <label>Dependent <span>*</span></label>
+          <input type="number" class="form-control" name="dependent" [(ngModel)]="formData.dependent"/>
+          <div class="error" *ngIf="showError && formData.dependent == ''">Please provide total number of dependents</div>
         </div>
-
-        <div class="form-data">
-          <label>Loan repayment method <span>*</span></label>
-          <span>Annuity</span>
-        </div>
-
-        <div class="form-data">
-          <label>Prefered repayment date <span>*</span></label>
-          <input type="text" class="form-control" name="repay_date"/>
-        </div>
-
         <br/>
         <div class="button-holder">
           <button type="button" (click)="back()">Back</button>
-          <button type="button" (click)="forward()">Forward</button>
+          <button type="button" (click)="verifyPersonalData()">Forward</button>
         </div>
+        
       </form>
+
+      
     </div>
 
     <div [ngClass]="{'content':true, 'active':currentTab == 3, 'left': transitionDirection == 'left', 'right':transitionDirection == 'right'}">
-      <p>Hello</p>
+      <div class="info-panel">
+        <div class="label">Firstname</div>
+        <div class="data">
+          {{formData.firstname}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Lastname</div>
+        <div class="data">
+          {{formData.lastname}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Personal Code</div>
+        <div class="data">
+          {{formData.code}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Marital Status</div>
+        <div class="data">
+          {{formData.maritalStatus}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Highest level of education</div>
+        <div class="data">
+          {{formData.education}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Number of Dependents</div>
+        <div class="data">
+          {{formData.dependent}}
+        </div>
+      </div>
+
+      <h3>Application data</h3>
+
+      <div class="info-panel">
+        <div class="label">Purpose of Loan</div>
+        <div class="data">
+          {{formData.purpose}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Property Address</div>
+        <div class="data">
+          {{formData.address}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Credit Type</div>
+        <div class="data">
+          {{formData.credit_type}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Loan amount</div>
+        <div class="data">
+          {{formData.amount}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Loan term</div>
+        <div class="data">
+          {{formData.termYear}} years, {{formData.termMonth}} months
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Dae of repayment</div>
+        <div class="data">
+          {{formData.repayDate}}
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="label">Total Income</div>
+        <div class="data">
+          {{getTotalIncome()}}
+        </div>
+      </div>
+
+      
       <div class="button-holder">
         <button type="button" (click)="back()">Edit</button>
-        <button type="button" (click)="verifyApplication()">Submit</button>
+        <button type="button" (click)="submit()">Submit</button>
       </div>
       
     </div>
 
+    <div class="tabs-content">
+      <div [ngClass]="{'content':true, 'active':currentTab == 4, 'left': transitionDirection == 'left', 'right':transitionDirection == 'right'}">
+        <div class="result-tab">
+          <div class="result-content">
+            <div class="round">
+              <span *ngIf="currentTab > 1" class="tag" [innerHTML]="'&#10004;'"></span>
+            </div>
+            <p>Your data has been recieved successfully, <a href="/">click here </a>to reapply</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
